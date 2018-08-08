@@ -10,17 +10,28 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 
+app.use(express.static(publicPath));
+
 io.on('connection', (socket) => {
 	console.log('new User is connected.');
-
 	socket.emit('newMessage', {
-		to : 'mike@example.com',
-		text : 'Hey, What is going on.',
-		createAt : 123
+		from: 'Admin',
+		text: 'Welcome to chat app',
+		createdAt: new Date().getTime()
+	});
+
+	socket.broadcast.emit('newMessage', {
+		from: 'Admin',
+		text: 'New user joined.',
+		createdAt: new Date().getTime()
 	});
 
 	socket.on('createMessage', (message) => {
-		console.log(message)
+		io.emit('newMessage', {
+			from: message.from,
+			text: message.text,
+			createdAt: new Date().getTime()
+		});
 	});
 
 	socket.on('disconnect', () => {
@@ -28,7 +39,7 @@ io.on('connection', (socket) => {
 	});
 });
 
-app.use(express.static(publicPath));
+
 
 server.listen(port, () => {
 	console.log(`Server is up on port ${port}`);
