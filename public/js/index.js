@@ -5,15 +5,17 @@ socket.on('connect', function () {
 });
 
 socket.on('newMessage', function (newMessage) {
+	var formattedTime = moment(newMessage.createdAt).format('h:mm a');
 	let li = jQuery('<li></li>');
-	li.text(`${newMessage.from}: ${newMessage.text}`);
+	li.text(`${newMessage.from} ${formattedTime}: ${newMessage.text}`);
 	jQuery('#messages').append(li);
 });
 
 socket.on('newLocationMessage', function (location) {
+	var formattedTime = moment(location.createdAt).format('h:mm a');
 	let li = jQuery('<li></li>');
 	let a = jQuery('<a target="_blank">My Current Location.</a>');
-	li.text(`${location.from}: `);
+	li.text(`${location.from} ${formattedTime}: `);
 	a.attr('href', location.link);
 	li.append(a);
 	jQuery('#messages').append(li);
